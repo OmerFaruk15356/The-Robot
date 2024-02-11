@@ -6,7 +6,6 @@ void replaceCoins(int size, int arr[size][size], int coinNumber);
 void printBoard(int size, int arr[size][size]);
 void playGame(int size, int coinBoard[size][size],int coinNumber);
 int findDistance(int *posX, int *posY,int size, int arr[size][size]);
-int distance(int posX, int posY, int x, int y);
 
 int main() {
     srand(time(NULL));
@@ -52,14 +51,33 @@ void playGame(int size, int arr[size][size],int coinNumber)
     int playerPosY = 0;
     arr[playerPosX][playerPosY] = 2;
     int turnCount = 0;
+    
     while(coinNumber != 0)
     {
         turnCount++;
         printf("\n\n%d. turn the board : \n",turnCount);
         printBoard(8, arr);
+        
+        while(playerPosX < size -1 || playerPosY < size -1)
+        {
+        arr[playerPosX][playerPosY] = 0;
         findDistance(&playerPosX,&playerPosY,8,arr);
+        if(arr[playerPosX][playerPosY]== 1)
+        {
+        arr[playerPosX][playerPosY] = 2;
         coinNumber--;
-    }    
+        }
+        }
+        printf("\n\nAfter turn board state: \n");
+        arr[size-1][size-1] = 2;
+        printBoard(8,arr);
+        arr[size-1][size-1] = 0;
+        arr[0][0] = 2;
+        playerPosX = 0;
+        playerPosY = 0;
+    }
+      
+    printf("\nYou collect all coin in %d. turn",turnCount);
 }
 
 int findDistance(int *posX, int *posY,int size, int arr[size][size])
@@ -75,17 +93,17 @@ int findDistance(int *posX, int *posY,int size, int arr[size][size])
 		{
 			if(arr[i][j] == 1) 
 			{
-                    printf("%d %d",i ,j);
+				currentDistance = (i - *posX) + (j - *posY);
+				if(currentDistance < minDistance)
+				{
+					closestX = i;
+					closestY = j;
+					minDistance = currentDistance;
+				}
 			}
 		}
 	}
     *posX = closestX;
     *posY = closestY;
-
     return currentDistance;
-}
-
-int distance(int posX, int posY, int x, int y)
-{
-    return (x-posX) + (y- posY);
 }
